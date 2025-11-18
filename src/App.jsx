@@ -296,10 +296,76 @@ function HowWeWork() {
   )
 }
 
+// Animated network background for CTA
+function ConnectedNodesBackground() {
+  const nodes = [
+    { x: 10, y: 30 },
+    { x: 28, y: 20 },
+    { x: 45, y: 35 },
+    { x: 65, y: 25 },
+    { x: 82, y: 40 },
+    { x: 20, y: 70 },
+    { x: 40, y: 60 },
+    { x: 60, y: 72 },
+    { x: 80, y: 60 },
+  ]
+  const edges = [
+    [0,1],[1,2],[2,3],[3,4],
+    [0,5],[5,6],[6,7],[7,8],[2,6],[3,7]
+  ]
+
+  return (
+    <div className="pointer-events-none absolute inset-0 -z-10">
+      {/* subtle glow */}
+      <div className="absolute -inset-10 bg-[radial-gradient(400px_circle_at_20%_30%,rgba(99,102,241,0.18),transparent_60%),radial-gradient(500px_circle_at_80%_70%,rgba(20,184,166,0.18),transparent_60%)]" />
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#818cf8" stopOpacity="0.4" />
+          </linearGradient>
+        </defs>
+        {edges.map(([a,b], i) => (
+          <line
+            key={`l-${i}`}
+            x1={nodes[a].x}
+            y1={nodes[a].y}
+            x2={nodes[b].x}
+            y2={nodes[b].y}
+            stroke="url(#g1)"
+            strokeWidth="0.4"
+            strokeLinecap="round"
+            opacity="0.6"
+          />
+        ))}
+        {nodes.map((n, i) => (
+          <circle key={`n-${i}`} cx={n.x} cy={n.y} r="1.2" fill="#94a3b8" opacity="0.35" />
+        ))}
+      </svg>
+      {/* flowing packets along selected edges */}
+      {edges.slice(0,5).map(([a,b], i) => {
+        const sx = nodes[a].x, sy = nodes[a].y
+        const ex = nodes[b].x, ey = nodes[b].y
+        return (
+          <motion.div
+            key={`p-${i}`}
+            className="absolute h-1.5 w-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-teal-300 shadow-[0_0_10px_2px_rgba(20,184,166,0.6)]"
+            initial={{ x: `${sx}%`, y: `${sy}%` }}
+            animate={{ x: `${ex}%`, y: `${ey}%` }}
+            transition={{ duration: 2 + i * 0.3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
 function CTASection() {
   return (
     <section id="cta" className="relative mx-auto max-w-7xl px-4 py-20">
       <GlassCard className="p-8 md:p-12 overflow-hidden">
+        {/* animated node network behind content */}
+        <ConnectedNodesBackground />
         <div className="pointer-events-none absolute -inset-32 bg-[radial-gradient(400px_circle_at_20%_30%,rgba(99,102,241,0.25),transparent_60%),radial-gradient(500px_circle_at_80%_70%,rgba(20,184,166,0.25),transparent_60%)]" />
         <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <div className="md:col-span-2">
